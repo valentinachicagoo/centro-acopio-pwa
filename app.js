@@ -1,5 +1,18 @@
 'use strict';
 
+// ── CACHE MIGRATION ───────────────────────────────────────────────────────────
+(async () => {
+  // Borra claves viejas de localStorage
+  ['acopio-v1','acopio-v2','acopio-v3'].forEach(k => localStorage.removeItem(k));
+  // Fuerza actualización del service worker
+  if ('serviceWorker' in navigator) {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(regs.map(r => r.unregister()));
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k !== 'acopio-v4').map(k => caches.delete(k)));
+  }
+})();
+
 // ── DEFAULT DATA ──────────────────────────────────────────────────────────────
 const DEFAULT_ITEMS = [
   { id: 'u1',  name: 'Papel higiénico', category: 'urgente',  sub: 'Aseo personal', status: 'critico',  needed: null, received: 0, unit: 'paquetes', notes: '' },
