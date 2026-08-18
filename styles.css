@@ -441,6 +441,16 @@ body {
 .checkin-bar-item { margin-bottom: 6px; }
 .checkin-bar-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
 
+/* ── RECURRENCIA ── */
+.req-recurrente {
+  font-size: 11px; font-weight: 700;
+  background: #fef3c7; color: #92400e;
+  padding: 2px 8px; border-radius: 20px;
+}
+.req-card-recurrente {
+  border-left: 3px solid #d97706;
+}
+
 /* ── COMUNIDAD TABLE ── */
 .req-comunidad-title { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
 .comunidad-table {

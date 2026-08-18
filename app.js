@@ -23,6 +23,24 @@ const DEFAULT_ITEMS = [
   { id: 'x2',  name: 'Tapabocas',       category: 'no_traer', sub: null,           status: null, needed: null, received: 0, unit: null, notes: 'Ya contamos con suficiente stock' },
 ];
 
+const DEFAULT_REQUERIMIENTOS = [
+  { id:'s1',  consecutivo:1,  fecha:'2026-08-16', ciudad:'Pereira',       barrio:'',                           nombre:'Leningrado 2',                  patrocinador:'Mafe Botero',   solarum:'Zairina 1601',  telefono:'',           direccion:'',           kitsAseo:0,  kitsBebe:1,  mercado:0,  animales:'', material:'Ropa bebé 4 meses, 5 cobijas, 1 almohada', pax:0,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-16', kitsAseoE:0,  kitsBebeE:1,  mercadoE:0,  notasEntrega:'' },
+  { id:'s2',  consecutivo:2,  fecha:'2026-08-17', ciudad:'Dosquebradas',  barrio:'',                           nombre:'Liliana Sanchez',               patrocinador:'',              solarum:'',              telefono:'3126591398', direccion:'',           kitsAseo:0,  kitsBebe:0,  mercado:1,  animales:'', material:'',                                         pax:3,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:0,  kitsBebeE:0,  mercadoE:1,  notasEntrega:'' },
+  { id:'s3',  consecutivo:3,  fecha:'2026-08-17', ciudad:'Dosquebradas',  barrio:'',                           nombre:'Edison Leandro Gomez Santana',  patrocinador:'',              solarum:'',              telefono:'3137393342', direccion:'',           kitsAseo:0,  kitsBebe:0,  mercado:1,  animales:'', material:'',                                         pax:0,  ayuda:'Moto',   estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:0,  kitsBebeE:0,  mercadoE:1,  notasEntrega:'' },
+  { id:'s4',  consecutivo:4,  fecha:'2026-08-17', ciudad:'',              barrio:'El Remanso',                 nombre:'Paola',                         patrocinador:'',              solarum:'Zairina 702',   telefono:'',           direccion:'',           kitsAseo:0,  kitsBebe:0,  mercado:0,  animales:'', material:'',                                         pax:60, ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:0,  kitsBebeE:0,  mercadoE:0,  notasEntrega:'' },
+  { id:'s5',  consecutivo:5,  fecha:'2026-08-17', ciudad:'Pereira',       barrio:'',                           nombre:'Empleada doméstica',            patrocinador:'',              solarum:'',              telefono:'',           direccion:'',           kitsAseo:0,  kitsBebe:0,  mercado:0,  animales:'', material:'',                                         pax:0,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:0,  kitsBebeE:0,  mercadoE:0,  notasEntrega:'' },
+  { id:'s6',  consecutivo:6,  fecha:'2026-08-17', ciudad:'Pereira',       barrio:'Leningrado 2',               nombre:'Leningrado 2',                  patrocinador:'Mafe Botero',   solarum:'Zairina 1601',  telefono:'',           direccion:'',           kitsAseo:0,  kitsBebe:0,  mercado:0,  animales:'', material:'Juguetes',                                 pax:60, ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:0,  kitsBebeE:0,  mercadoE:0,  notasEntrega:'' },
+  { id:'s7',  consecutivo:7,  fecha:'2026-08-17', ciudad:'Pereira',       barrio:'Finca Condina',              nombre:'Finca Condina',                 patrocinador:'Mafe Botero',   solarum:'Zairina 1601',  telefono:'',           direccion:'',           kitsAseo:1,  kitsBebe:0,  mercado:1,  animales:'', material:'Cobija, colchoneta, toalla',               pax:1,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:1,  kitsBebeE:0,  mercadoE:1,  notasEntrega:'' },
+  { id:'s8',  consecutivo:8,  fecha:'2026-08-17', ciudad:'',              barrio:'',                           nombre:'Sin identificar',               patrocinador:'',              solarum:'',              telefono:'',           direccion:'',           kitsAseo:1,  kitsBebe:0,  mercado:1,  animales:'', material:'',                                         pax:1,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:1,  kitsBebeE:0,  mercadoE:1,  notasEntrega:'' },
+  { id:'s9',  consecutivo:9,  fecha:'2026-08-17', ciudad:'',              barrio:'Banderas',                   nombre:'Olla comunitaria Banderas',     patrocinador:'',              solarum:'',              telefono:'',           direccion:'',           kitsAseo:10, kitsBebe:10, mercado:0,  animales:'', material:'3 palas, 4 picas',                         pax:0,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:10, kitsBebeE:10, mercadoE:0,  notasEntrega:'' },
+  { id:'s10', consecutivo:10, fecha:'2026-08-17', ciudad:'Pereira',       barrio:'Villa Santana',              nombre:'Luz Mary Villada',              patrocinador:'Laura Mesas',   solarum:'Akore 1202',    telefono:'',           direccion:'',           kitsAseo:13, kitsBebe:3,  mercado:13, animales:'3',material:'Juguetes',                                 pax:0,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:13, kitsBebeE:3,  mercadoE:13, notasEntrega:'' },
+  { id:'s11', consecutivo:11, fecha:'2026-08-17', ciudad:'',              barrio:'Solarum',                    nombre:'Personal vigilancia',           patrocinador:'',              solarum:'Colaboradores', telefono:'',           direccion:'',           kitsAseo:7,  kitsBebe:0,  mercado:7,  animales:'', material:'',                                         pax:0,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:7,  kitsBebeE:0,  mercadoE:7,  notasEntrega:'' },
+  { id:'s12', consecutivo:12, fecha:'2026-08-17', ciudad:'',              barrio:'Solarum',                    nombre:'Valentina - chica salvavidas',  patrocinador:'',              solarum:'Colaboradores', telefono:'',           direccion:'',           kitsAseo:1,  kitsBebe:0,  mercado:1,  animales:'', material:'',                                         pax:0,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-17', kitsAseoE:1,  kitsBebeE:0,  mercadoE:1,  notasEntrega:'' },
+  { id:'s13', consecutivo:13, fecha:'2026-08-18', ciudad:'Pereira',       barrio:'Hospital San Jorge',         nombre:'Jose Leonardo',                 patrocinador:'Sofia',         solarum:'Ivan Gonzalez', telefono:'3233246794', direccion:'Anemoi 808-3',kitsAseo:0,  kitsBebe:0,  mercado:0,  animales:'', material:'',                                         pax:0,  ayuda:'2 niños', estado:'entregado', fechaEntrega:'2026-08-18', kitsAseoE:0,  kitsBebeE:0,  mercadoE:0,  notasEntrega:'' },
+  { id:'s14', consecutivo:14, fecha:'2026-08-18', ciudad:'',              barrio:'',                           nombre:'Claudia',                       patrocinador:'',              solarum:'',              telefono:'',           direccion:'',           kitsAseo:0,  kitsBebe:0,  mercado:2,  animales:'', material:'',                                         pax:0,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-18', kitsAseoE:0,  kitsBebeE:0,  mercadoE:2,  notasEntrega:'' },
+  { id:'s15', consecutivo:15, fecha:'2026-08-18', ciudad:'',              barrio:'Torres del Campos Sn Joaquín',nombre:'Marlyn Loaiza',                patrocinador:'',              solarum:'',              telefono:'3156592653', direccion:'',           kitsAseo:0,  kitsBebe:0,  mercado:0,  animales:'', material:'',                                         pax:0,  ayuda:'',       estado:'entregado', fechaEntrega:'2026-08-18', kitsAseoE:0,  kitsBebeE:0,  mercadoE:0,  notasEntrega:'' },
+];
+
 const SERVICIOS = {
   transporte:      '🚗 Transporte',
   administrativo:  '📁 Administrativo',
@@ -57,21 +75,26 @@ let editingReqId = null;
 // ── PERSISTENCE ───────────────────────────────────────────────────────────────
 function load() {
   try {
-    const saved = JSON.parse(localStorage.getItem('acopio-v2'));
+    const saved = JSON.parse(localStorage.getItem('acopio-v3'));
     if (saved) {
       state = { ...state, ...saved, isAdmin: false, currentScreen: 'home' };
     } else {
       state.items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+      state.requerimientos = JSON.parse(JSON.stringify(DEFAULT_REQUERIMIENTOS));
+      state.nextConsecutivo = 16;
     }
   } catch {
     state.items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+    state.requerimientos = JSON.parse(JSON.stringify(DEFAULT_REQUERIMIENTOS));
+    state.nextConsecutivo = 16;
   }
 }
 
 function save() {
   state.updatedAt = new Date().toISOString();
-  localStorage.setItem('acopio-v2', JSON.stringify(state));
+  localStorage.setItem('acopio-v3', JSON.stringify(state));
 }
+
 
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -467,23 +490,43 @@ function renderRequerimientos() {
   else renderReqLista();
 }
 
+function buildRecurrenceMap() {
+  const map = {};
+  state.requerimientos.forEach(r => {
+    const keys = [r.barrio, r.nombre].filter(Boolean);
+    keys.forEach(k => {
+      const norm = k.toLowerCase().trim();
+      map[norm] = (map[norm] || 0) + 1;
+    });
+  });
+  return map;
+}
+
 function renderReqLista() {
   const list = document.getElementById('req-list');
   if (state.requerimientos.length === 0) {
     list.innerHTML = '<div class="empty-state">No hay requerimientos registrados aún.</div>';
     return;
   }
+  const recMap = buildRecurrenceMap();
   list.innerHTML = state.requerimientos.map(r => {
     const estado = ESTADO_CONFIG[r.estado || 'pendiente'];
     const editBtn = state.isAdmin
       ? `<button class="btn-sm" style="background:#eff6ff;color:#1e40af" data-edit-req="${r.id}">✏ Editar</button>` : '';
     const checkin = buildCheckinBar(r);
+    const recCount = Math.max(
+      recMap[(r.barrio||'').toLowerCase().trim()] || 0,
+      recMap[(r.nombre||'').toLowerCase().trim()] || 0
+    );
+    const recBadge = recCount > 1
+      ? `<span class="req-recurrente">🔄 Recurrente ×${recCount}</span>` : '';
     return `
-    <div class="req-card">
+    <div class="req-card ${recCount > 1 ? 'req-card-recurrente' : ''}">
       <div class="req-header-row">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span class="req-consecutivo">${consecutivoLabel(r.consecutivo)}</span>
           <span class="req-estado ${estado.cls}">${estado.label}</span>
+          ${recBadge}
         </div>
         ${editBtn}
       </div>
