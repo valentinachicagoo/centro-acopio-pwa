@@ -703,6 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Login
   document.getElementById('btn-viewer').addEventListener('click', loginViewer);
   document.getElementById('btn-admin').addEventListener('click', loginAdmin);
+  document.getElementById('btn-ingresar').addEventListener('click', loginAdmin);
   document.getElementById('admin-password-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') loginAdmin();
   });
