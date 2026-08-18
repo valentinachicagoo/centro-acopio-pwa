@@ -383,6 +383,77 @@ body {
 .radio-option { display: flex; align-items: center; gap: 6px; font-size: 15px; cursor: pointer; }
 .radio-option input { accent-color: var(--blue); width: 18px; height: 18px; }
 
+/* ── REQ VIEW TABS ── */
+.req-view-tabs {
+  display: flex; gap: 0;
+  background: var(--white);
+  border-bottom: 2px solid var(--gray-border);
+  padding: 0 16px;
+}
+.req-tab {
+  padding: 10px 16px; border: none; background: none;
+  font-size: 14px; font-weight: 600; color: var(--text-muted);
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.req-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+/* ── MODAL TABS ── */
+.modal-tabs {
+  display: flex; gap: 4px; margin-bottom: 16px;
+  background: var(--gray-bg); padding: 4px; border-radius: 10px;
+}
+.modal-tab {
+  flex: 1; padding: 8px; border: none; border-radius: 8px;
+  font-size: 13px; font-weight: 600; color: var(--text-muted);
+  background: transparent; cursor: pointer;
+}
+.modal-tab.active { background: var(--white); color: var(--blue); box-shadow: var(--shadow); }
+
+/* ── CONSECUTIVO & ESTADO ── */
+.req-consecutivo {
+  font-size: 13px; font-weight: 800;
+  background: var(--blue); color: #fff;
+  padding: 2px 8px; border-radius: 20px;
+}
+.req-estado { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.estado-pendiente { background: #f3f4f6; color: #4b5563; }
+.estado-parcial   { background: #dbeafe; color: #1e40af; }
+.estado-entregado { background: #dcfce7; color: #166534; }
+
+/* ── CHECK-IN ── */
+.checkin-section-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-muted);
+  margin: 12px 0 6px;
+}
+.checkin-grid {
+  display: grid; grid-template-columns: 1fr 80px;
+  gap: 8px; align-items: center; margin-bottom: 6px;
+}
+.checkin-grid-3 { grid-template-columns: 1fr 70px 80px; }
+.checkin-col-header { font-size: 11px; font-weight: 700; color: var(--text-muted); text-align: center; }
+.checkin-label { font-size: 14px; font-weight: 500; }
+.checkin-input { padding: 8px 10px !important; text-align: center; }
+.checkin-pedido {
+  font-size: 15px; font-weight: 700; text-align: center; color: var(--text-muted);
+}
+.checkin-bar { margin: 8px 0 4px; }
+.checkin-bar-item { margin-bottom: 6px; }
+.checkin-bar-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+
+/* ── COMUNIDAD TABLE ── */
+.req-comunidad-title { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.comunidad-table {
+  width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px;
+}
+.comunidad-table th {
+  text-align: left; padding: 6px 8px;
+  background: var(--gray-bg); font-size: 11px;
+  text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted);
+}
+.comunidad-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-border); }
+.comunidad-table td:nth-child(2), .comunidad-table td:nth-child(3) { text-align: center; font-weight: 700; }
+
 /* ── RESPONSIVE ── */
 @media (min-width: 640px) {
   .content { padding: 20px; }

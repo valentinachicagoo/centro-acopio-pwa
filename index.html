@@ -171,6 +171,10 @@
         <span id="req-role-badge" class="role-badge viewer">👁 Vista</span>
       </div>
     </header>
+    <div class="req-view-tabs">
+      <button class="req-tab active" data-view="lista">Lista</button>
+      <button class="req-tab" data-view="comunidad">Por comunidad</button>
+    </div>
     <main class="content" id="req-list"></main>
     <button id="req-fab" class="fab hidden">+</button>
   </div>
@@ -287,79 +291,135 @@
         <span id="req-modal-title">Nuevo requerimiento</span>
         <button class="modal-close" data-close="req-modal">×</button>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Fecha *</label>
-          <input id="rf-fecha" class="form-input" type="date">
+
+      <!-- Tabs solicitud / entrega -->
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="solicitud">📋 Solicitud</button>
+        <button class="modal-tab" data-tab="entrega">✅ Entrega</button>
+      </div>
+
+      <!-- ── TAB SOLICITUD ── -->
+      <div id="tab-solicitud">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Fecha *</label>
+            <input id="rf-fecha" class="form-input" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ciudad</label>
+            <input id="rf-ciudad" class="form-input" type="text" placeholder="Ciudad">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Barrio</label>
+            <input id="rf-barrio" class="form-input" type="text" placeholder="Barrio">
+          </div>
+          <div class="form-group">
+            <label class="form-label">PAX (personas)</label>
+            <input id="rf-pax" class="form-input" type="number" min="0" placeholder="0">
+          </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Ciudad</label>
-          <input id="rf-ciudad" class="form-input" type="text" placeholder="Ciudad">
+          <label class="form-label">Nombre del beneficiario *</label>
+          <input id="rf-nombre" class="form-input" type="text" placeholder="Nombre completo">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Patrocinador / Responsable</label>
+          <input id="rf-patrocinador" class="form-input" type="text" placeholder="Nombre del responsable">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Solarum</label>
+            <input id="rf-solarum" class="form-input" type="text" placeholder="">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Teléfono</label>
+            <input id="rf-telefono" class="form-input" type="tel" placeholder="300 000 0000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Dirección</label>
+          <input id="rf-direccion" class="form-input" type="text" placeholder="Dirección completa">
+        </div>
+        <div class="checkin-section-label">Lo que se pidió</div>
+        <div class="checkin-grid">
+          <div class="checkin-col-header"></div>
+          <div class="checkin-col-header">Pedido</div>
+        </div>
+        <div class="checkin-grid">
+          <div class="checkin-label">🧴 Kits Aseo</div>
+          <input id="rf-kits-aseo" class="form-input checkin-input" type="number" min="0" placeholder="0">
+        </div>
+        <div class="checkin-grid">
+          <div class="checkin-label">👶 Kits Bebé</div>
+          <input id="rf-kits-bebe" class="form-input checkin-input" type="number" min="0" placeholder="0">
+        </div>
+        <div class="checkin-grid">
+          <div class="checkin-label">🛒 Mercado</div>
+          <input id="rf-mercado" class="form-input checkin-input" type="number" min="0" placeholder="0">
+        </div>
+        <div class="form-row" style="margin-top:8px">
+          <div class="form-group">
+            <label class="form-label">Animales</label>
+            <input id="rf-animales" class="form-input" type="text" placeholder="Ej: 2 perros">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Material</label>
+            <input id="rf-material" class="form-input" type="text" placeholder="Tipo de material">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ayuda requerida</label>
+          <textarea id="rf-ayuda" class="form-textarea" placeholder="Describe la ayuda que necesita…"></textarea>
         </div>
       </div>
-      <div class="form-row">
+
+      <!-- ── TAB ENTREGA ── -->
+      <div id="tab-entrega" style="display:none">
         <div class="form-group">
-          <label class="form-label">Barrio</label>
-          <input id="rf-barrio" class="form-input" type="text" placeholder="Barrio">
+          <label class="form-label">Estado</label>
+          <select id="rf-estado" class="form-select">
+            <option value="pendiente">⏳ Pendiente</option>
+            <option value="parcial">🔵 Entrega parcial</option>
+            <option value="entregado">✅ Entregado completo</option>
+          </select>
         </div>
         <div class="form-group">
-          <label class="form-label">PAX (personas)</label>
-          <input id="rf-pax" class="form-input" type="number" min="0" placeholder="0">
+          <label class="form-label">Fecha de entrega</label>
+          <input id="rf-fecha-entrega" class="form-input" type="date">
         </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Nombre del beneficiario *</label>
-        <input id="rf-nombre" class="form-input" type="text" placeholder="Nombre completo">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Patrocinador / Responsable</label>
-        <input id="rf-patrocinador" class="form-input" type="text" placeholder="Nombre del responsable">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Solarum</label>
-          <input id="rf-solarum" class="form-input" type="text" placeholder="">
+        <div class="checkin-section-label">Comparativo pedido vs entregado</div>
+        <div class="checkin-grid checkin-grid-3">
+          <div class="checkin-col-header"></div>
+          <div class="checkin-col-header">Pedido</div>
+          <div class="checkin-col-header">Entregado</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Teléfono</label>
-          <input id="rf-telefono" class="form-input" type="tel" placeholder="300 000 0000">
+        <div class="checkin-grid checkin-grid-3">
+          <div class="checkin-label">🧴 Kits Aseo</div>
+          <div id="re-kits-aseo-pedido" class="checkin-pedido">—</div>
+          <input id="rf-kits-aseo-e" class="form-input checkin-input" type="number" min="0" placeholder="0">
         </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Dirección</label>
-        <input id="rf-direccion" class="form-input" type="text" placeholder="Dirección completa">
-      </div>
-      <div class="form-label" style="margin-bottom:8px;margin-top:4px">Kits y mercado</div>
-      <div class="form-row-3">
-        <div class="form-group">
-          <label class="form-label">Kits Aseo</label>
-          <input id="rf-kits-aseo" class="form-input" type="number" min="0" placeholder="0">
+        <div class="checkin-grid checkin-grid-3">
+          <div class="checkin-label">👶 Kits Bebé</div>
+          <div id="re-kits-bebe-pedido" class="checkin-pedido">—</div>
+          <input id="rf-kits-bebe-e" class="form-input checkin-input" type="number" min="0" placeholder="0">
         </div>
-        <div class="form-group">
-          <label class="form-label">Kits Bebé</label>
-          <input id="rf-kits-bebe" class="form-input" type="number" min="0" placeholder="0">
+        <div class="checkin-grid checkin-grid-3">
+          <div class="checkin-label">🛒 Mercado</div>
+          <div id="re-mercado-pedido" class="checkin-pedido">—</div>
+          <input id="rf-mercado-e" class="form-input checkin-input" type="number" min="0" placeholder="0">
         </div>
-        <div class="form-group">
-          <label class="form-label">Mercado</label>
-          <input id="rf-mercado" class="form-input" type="number" min="0" placeholder="0">
+        <div class="form-group" style="margin-top:12px">
+          <label class="form-label">Notas de entrega</label>
+          <textarea id="rf-notas-entrega" class="form-textarea" placeholder="Observaciones sobre la entrega…"></textarea>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Animales</label>
-          <input id="rf-animales" class="form-input" type="text" placeholder="Ej: 2 perros">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Material</label>
-          <input id="rf-material" class="form-input" type="text" placeholder="Tipo de material">
-        </div>
+
+      <div style="margin-top:16px">
+        <button id="req-save-btn" class="btn btn-primary" style="margin-bottom:10px">Guardar</button>
+        <button id="req-delete-btn" class="btn btn-red" style="display:none">Eliminar</button>
       </div>
-      <div class="form-group">
-        <label class="form-label">Ayuda requerida</label>
-        <textarea id="rf-ayuda" class="form-textarea" placeholder="Describe la ayuda que necesita…"></textarea>
-      </div>
-      <button id="req-save-btn" class="btn btn-primary" style="margin-bottom:10px">Guardar</button>
-      <button id="req-delete-btn" class="btn btn-red" style="display:none">Eliminar</button>
     </div>
   </div>
 

@@ -44,6 +44,7 @@ let state = {
   announcement: '',
   adminUsername: 'solarum',
   adminPassword: 'centrodeacopio',
+  nextConsecutivo: 1,
   updatedAt: null,
   collapsed: { urgente: false, necesario: false, no_traer: false },
 };
@@ -440,6 +441,18 @@ function deleteItem(id) {
 }
 
 // ── REQUERIMIENTOS ────────────────────────────────────────────────────────────
+let reqView = 'lista'; // 'lista' | 'comunidad'
+
+const ESTADO_CONFIG = {
+  pendiente:  { label: '⏳ Pendiente',  cls: 'estado-pendiente' },
+  parcial:    { label: '🔵 Parcial',    cls: 'estado-parcial'   },
+  entregado:  { label: '✅ Entregado',  cls: 'estado-entregado' },
+};
+
+function consecutivoLabel(n) {
+  return '#' + String(n).padStart(3, '0');
+}
+
 function renderRequerimientos() {
   const badge = document.getElementById('req-role-badge');
   badge.className = 'role-badge ' + (state.isAdmin ? 'admin' : 'viewer');
@@ -447,42 +460,124 @@ function renderRequerimientos() {
   document.getElementById('req-fab').classList.toggle('hidden', !state.isAdmin);
   document.getElementById('req-header-count').textContent = state.requerimientos.length + ' solicitudes';
 
+  document.querySelectorAll('.req-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.view === reqView));
+
+  if (reqView === 'comunidad') renderReqPorComunidad();
+  else renderReqLista();
+}
+
+function renderReqLista() {
   const list = document.getElementById('req-list');
   if (state.requerimientos.length === 0) {
     list.innerHTML = '<div class="empty-state">No hay requerimientos registrados aún.</div>';
     return;
   }
-
-  list.innerHTML = state.requerimientos.map(r => `
+  list.innerHTML = state.requerimientos.map(r => {
+    const estado = ESTADO_CONFIG[r.estado || 'pendiente'];
+    const editBtn = state.isAdmin
+      ? `<button class="btn-sm" style="background:#eff6ff;color:#1e40af" data-edit-req="${r.id}">✏ Editar</button>` : '';
+    const checkin = buildCheckinBar(r);
+    return `
     <div class="req-card">
       <div class="req-header-row">
-        <div>
-          <div class="req-nombre">${r.nombre}</div>
-          <div class="req-meta">${[formatDateShort(r.fecha), r.ciudad, r.barrio].filter(Boolean).join(' · ')}</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="req-consecutivo">${consecutivoLabel(r.consecutivo)}</span>
+          <span class="req-estado ${estado.cls}">${estado.label}</span>
         </div>
-        ${state.isAdmin ? `<button class="btn-sm" style="background:#eff6ff;color:#1e40af" data-edit-req="${r.id}">✏ Editar</button>` : ''}
+        ${editBtn}
       </div>
-      <div class="req-tags">
+      <div class="req-nombre">${r.nombre}</div>
+      <div class="req-meta">${[formatDateShort(r.fecha), r.ciudad, r.barrio].filter(Boolean).join(' · ')}</div>
+      <div class="req-tags" style="margin-top:6px">
         ${r.pax ? `<span class="req-tag">👥 ${r.pax} PAX</span>` : ''}
         ${r.kitsAseo ? `<span class="req-tag">🧴 ${r.kitsAseo} Aseo</span>` : ''}
         ${r.kitsBebe ? `<span class="req-tag">👶 ${r.kitsBebe} Bebé</span>` : ''}
         ${r.mercado ? `<span class="req-tag">🛒 ${r.mercado} Mercado</span>` : ''}
         ${r.animales ? `<span class="req-tag">🐾 ${r.animales}</span>` : ''}
       </div>
-      ${r.telefono ? `<div class="req-meta">📞 ${r.telefono}${r.direccion ? '  ·  📍 ' + r.direccion : ''}</div>` : ''}
+      ${checkin}
+      ${r.telefono ? `<div class="req-meta" style="margin-top:6px">📞 ${r.telefono}${r.direccion ? ' · 📍 ' + r.direccion : ''}</div>` : ''}
       ${r.ayuda ? `<div class="req-ayuda">${r.ayuda}</div>` : ''}
-      ${r.patrocinador ? `<div class="req-meta" style="margin-top:4px">Responsable: ${r.patrocinador}</div>` : ''}
-    </div>`).join('');
+      ${r.notasEntrega ? `<div class="req-ayuda" style="background:#f0fdf4;border-left:3px solid #16a34a">📦 ${r.notasEntrega}</div>` : ''}
+    </div>`;
+  }).join('');
 
   list.querySelectorAll('[data-edit-req]').forEach(btn =>
     btn.addEventListener('click', () => openReqModal(btn.dataset.editReq)));
 }
 
+function buildCheckinBar(r) {
+  const items = [
+    { label: 'Aseo', pedido: r.kitsAseo, entregado: r.kitsAseoE },
+    { label: 'Bebé', pedido: r.kitsBebe, entregado: r.kitsBebeE },
+    { label: 'Mercado', pedido: r.mercado, entregado: r.mercadoE },
+  ].filter(i => i.pedido > 0);
+  if (items.length === 0 || r.estado === 'pendiente') return '';
+  return `<div class="checkin-bar">${items.map(i => {
+    const pct = i.pedido > 0 ? Math.min(100, Math.round((i.entregado || 0) / i.pedido * 100)) : 0;
+    const color = pct >= 100 ? '#16a34a' : pct > 0 ? '#3b82f6' : '#d97706';
+    return `<div class="checkin-bar-item">
+      <div class="checkin-bar-label">${i.label}: ${i.entregado || 0}/${i.pedido}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%;background:${color}"></div></div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function renderReqPorComunidad() {
+  const list = document.getElementById('req-list');
+  if (state.requerimientos.length === 0) {
+    list.innerHTML = '<div class="empty-state">No hay requerimientos registrados aún.</div>';
+    return;
+  }
+  const groups = {};
+  state.requerimientos.forEach(r => {
+    const key = [r.ciudad, r.barrio].filter(Boolean).join(' — ') || 'Sin ubicación';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(r);
+  });
+  list.innerHTML = Object.entries(groups).map(([lugar, reqs]) => {
+    const totales = reqs.reduce((acc, r) => ({
+      pax: acc.pax + (r.pax || 0),
+      kitsAseo: acc.kitsAseo + (r.kitsAseo || 0),
+      kitsAseoE: acc.kitsAseoE + (r.kitsAseoE || 0),
+      kitsBebe: acc.kitsBebe + (r.kitsBebe || 0),
+      kitsBebeE: acc.kitsBebeE + (r.kitsBebeE || 0),
+      mercado: acc.mercado + (r.mercado || 0),
+      mercadoE: acc.mercadoE + (r.mercadoE || 0),
+    }), { pax:0, kitsAseo:0, kitsAseoE:0, kitsBebe:0, kitsBebeE:0, mercado:0, mercadoE:0 });
+
+    const entregados = reqs.filter(r => r.estado === 'entregado').length;
+    return `
+    <div class="req-card">
+      <div class="req-comunidad-title">📍 ${lugar}</div>
+      <div class="req-meta">${reqs.length} solicitudes · ${entregados} entregadas · ${totales.pax} PAX</div>
+      <table class="comunidad-table">
+        <thead><tr><th>Item</th><th>Pedido</th><th>Entregado</th></tr></thead>
+        <tbody>
+          <tr><td>🧴 Kits Aseo</td><td>${totales.kitsAseo}</td><td>${totales.kitsAseoE}</td></tr>
+          <tr><td>👶 Kits Bebé</td><td>${totales.kitsBebe}</td><td>${totales.kitsBebeE}</td></tr>
+          <tr><td>🛒 Mercado</td><td>${totales.mercado}</td><td>${totales.mercadoE}</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px">${reqs.map(r => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f3f4f6;font-size:13px">
+          <span>${consecutivoLabel(r.consecutivo)} ${r.nombre}</span>
+          <span class="req-estado ${(ESTADO_CONFIG[r.estado||'pendiente']).cls}" style="font-size:11px">${(ESTADO_CONFIG[r.estado||'pendiente']).label}</span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function openReqModal(id) {
   editingReqId = id || null;
-  document.getElementById('req-modal-title').textContent = id ? 'Editar requerimiento' : 'Nuevo requerimiento';
+  document.getElementById('req-modal-title').textContent = id
+    ? `Editar ${consecutivoLabel(state.requerimientos.find(r=>r.id===id)?.consecutivo || 0)}`
+    : 'Nuevo requerimiento';
   document.getElementById('req-delete-btn').style.display = id ? 'block' : 'none';
-  const fields = ['fecha','ciudad','barrio','nombre','patrocinador','solarum','telefono','direccion','kits-aseo','kits-bebe','mercado','animales','material','pax','ayuda'];
+  switchModalTab('solicitud');
+
   if (id) {
     const r = state.requerimientos.find(x => x.id === id);
     if (!r) return;
@@ -501,11 +596,37 @@ function openReqModal(id) {
     document.getElementById('rf-material').value = r.material || '';
     document.getElementById('rf-pax').value = r.pax || '';
     document.getElementById('rf-ayuda').value = r.ayuda || '';
+    document.getElementById('rf-estado').value = r.estado || 'pendiente';
+    document.getElementById('rf-fecha-entrega').value = r.fechaEntrega || '';
+    document.getElementById('rf-kits-aseo-e').value = r.kitsAseoE || '';
+    document.getElementById('rf-kits-bebe-e').value = r.kitsBebeE || '';
+    document.getElementById('rf-mercado-e').value = r.mercadoE || '';
+    document.getElementById('rf-notas-entrega').value = r.notasEntrega || '';
+    document.getElementById('re-kits-aseo-pedido').textContent = r.kitsAseo || '0';
+    document.getElementById('re-kits-bebe-pedido').textContent = r.kitsBebe || '0';
+    document.getElementById('re-mercado-pedido').textContent = r.mercado || '0';
   } else {
-    fields.forEach(f => { const el = document.getElementById('rf-' + f); if(el) el.value = ''; });
+    ['rf-ciudad','rf-barrio','rf-nombre','rf-patrocinador','rf-solarum','rf-telefono',
+     'rf-direccion','rf-animales','rf-material','rf-ayuda','rf-notas-entrega'].forEach(f => {
+      document.getElementById(f).value = '';
+    });
+    ['rf-kits-aseo','rf-kits-bebe','rf-mercado','rf-pax','rf-kits-aseo-e','rf-kits-bebe-e','rf-mercado-e'].forEach(f => {
+      document.getElementById(f).value = '';
+    });
     document.getElementById('rf-fecha').value = new Date().toISOString().split('T')[0];
+    document.getElementById('rf-fecha-entrega').value = '';
+    document.getElementById('rf-estado').value = 'pendiente';
+    ['re-kits-aseo-pedido','re-kits-bebe-pedido','re-mercado-pedido'].forEach(f => {
+      document.getElementById(f).textContent = '—';
+    });
   }
   openModal('req-modal');
+}
+
+function switchModalTab(tab) {
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.getElementById('tab-solicitud').style.display = tab === 'solicitud' ? '' : 'none';
+  document.getElementById('tab-entrega').style.display = tab === 'entrega' ? '' : 'none';
 }
 
 function saveRequerimiento() {
@@ -527,12 +648,18 @@ function saveRequerimiento() {
     material: document.getElementById('rf-material').value.trim(),
     pax: parseInt(document.getElementById('rf-pax').value) || 0,
     ayuda: document.getElementById('rf-ayuda').value.trim(),
+    estado: document.getElementById('rf-estado').value,
+    fechaEntrega: document.getElementById('rf-fecha-entrega').value,
+    kitsAseoE: parseInt(document.getElementById('rf-kits-aseo-e').value) || 0,
+    kitsBebeE: parseInt(document.getElementById('rf-kits-bebe-e').value) || 0,
+    mercadoE: parseInt(document.getElementById('rf-mercado-e').value) || 0,
+    notasEntrega: document.getElementById('rf-notas-entrega').value.trim(),
   };
   if (editingReqId) {
     const idx = state.requerimientos.findIndex(r => r.id === editingReqId);
     if (idx > -1) state.requerimientos[idx] = { ...state.requerimientos[idx], ...data };
   } else {
-    state.requerimientos.push({ id: uid(), ...data });
+    state.requerimientos.push({ id: uid(), consecutivo: state.nextConsecutivo++, ...data });
   }
   save();
   closeModal('req-modal');
@@ -612,6 +739,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Items modal
   document.getElementById('item-save-btn').addEventListener('click', saveItem);
   document.getElementById('item-delete-btn').addEventListener('click', () => deleteItem(null));
+
+  // Requerimientos tabs
+  document.querySelectorAll('.req-tab').forEach(t =>
+    t.addEventListener('click', () => { reqView = t.dataset.view; renderRequerimientos(); }));
+  document.querySelectorAll('.modal-tab').forEach(t =>
+    t.addEventListener('click', () => switchModalTab(t.dataset.tab)));
 
   // Requerimientos modal
   document.getElementById('req-save-btn').addEventListener('click', saveRequerimiento);
