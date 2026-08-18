@@ -490,43 +490,23 @@ function renderRequerimientos() {
   else renderReqLista();
 }
 
-function buildRecurrenceMap() {
-  const map = {};
-  state.requerimientos.forEach(r => {
-    const keys = [r.barrio, r.nombre].filter(Boolean);
-    keys.forEach(k => {
-      const norm = k.toLowerCase().trim();
-      map[norm] = (map[norm] || 0) + 1;
-    });
-  });
-  return map;
-}
-
 function renderReqLista() {
   const list = document.getElementById('req-list');
   if (state.requerimientos.length === 0) {
     list.innerHTML = '<div class="empty-state">No hay requerimientos registrados aún.</div>';
     return;
   }
-  const recMap = buildRecurrenceMap();
   list.innerHTML = state.requerimientos.map(r => {
     const estado = ESTADO_CONFIG[r.estado || 'pendiente'];
     const editBtn = state.isAdmin
       ? `<button class="btn-sm" style="background:#eff6ff;color:#1e40af" data-edit-req="${r.id}">✏ Editar</button>` : '';
     const checkin = buildCheckinBar(r);
-    const recCount = Math.max(
-      recMap[(r.barrio||'').toLowerCase().trim()] || 0,
-      recMap[(r.nombre||'').toLowerCase().trim()] || 0
-    );
-    const recBadge = recCount > 1
-      ? `<span class="req-recurrente">🔄 Recurrente ×${recCount}</span>` : '';
     return `
-    <div class="req-card ${recCount > 1 ? 'req-card-recurrente' : ''}">
+    <div class="req-card">
       <div class="req-header-row">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span class="req-consecutivo">${consecutivoLabel(r.consecutivo)}</span>
           <span class="req-estado ${estado.cls}">${estado.label}</span>
-          ${recBadge}
         </div>
         ${editBtn}
       </div>
