@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1e40af">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Acopio">
+  <title>Centro de Acopio</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ══ LOGIN ══════════════════════════════════════════════════════════════ -->
+  <div id="login-screen" class="screen">
+    <div class="login-card">
+      <div class="login-logo">🏠</div>
+      <div class="login-title">Centro de Acopio</div>
+      <div class="login-sub">Ayuda humanitaria — Emergencia sísmica</div>
+      <button id="btn-viewer" class="btn btn-primary">👁 Ver información</button>
+      <div class="login-divider">o</div>
+      <button id="btn-admin" class="btn btn-outline">⚙ Administrar</button>
+      <div id="admin-password-field">
+        <input id="admin-password-input" type="password" placeholder="Contraseña de administrador">
+        <div id="login-error" class="login-error">Contraseña incorrecta.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ HOME ═══════════════════════════════════════════════════════════════ -->
+  <div id="home-screen" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <span style="font-size:22px">🏠</span>
+        <div>
+          <div class="header-title">Centro de Acopio</div>
+          <div class="header-sub">Ayuda humanitaria</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="home-role-badge" class="role-badge viewer">👁 Vista</span>
+        <button id="home-logout-btn" class="btn-icon" style="display:none">🔓</button>
+      </div>
+    </header>
+
+    <div id="home-announcement" class="announcement hidden">
+      <span class="announcement-icon">📢</span>
+      <span id="home-announcement-text" class="announcement-text"></span>
+      <button id="home-ann-edit-btn" class="btn-sm" style="background:#fde68a;color:#78350f;display:none;flex-shrink:0">✏</button>
+    </div>
+
+    <main class="home-grid">
+      <button class="module-card card-voluntarios" data-nav="voluntarios">
+        <div class="module-icon">🤝</div>
+        <div class="module-title">Manos a la Obra</div>
+        <div class="module-desc">Registro de voluntarios y aportes</div>
+        <div class="module-count" id="vol-count"></div>
+      </button>
+
+      <button class="module-card card-donaciones" data-nav="donaciones">
+        <div class="module-icon">🎁</div>
+        <div class="module-title">Donaciones</div>
+        <div class="module-desc">Inventario de ayuda humanitaria</div>
+        <div class="module-count" id="don-count"></div>
+      </button>
+
+      <button class="module-card card-requerimientos" data-nav="requerimientos">
+        <div class="module-icon">📋</div>
+        <div class="module-title">Requerimientos</div>
+        <div class="module-desc">Solicitudes de ayuda por familia</div>
+        <div class="module-count" id="req-count"></div>
+      </button>
+    </main>
+  </div>
+
+  <!-- ══ MANOS A LA OBRA ════════════════════════════════════════════════════ -->
+  <div id="voluntarios-screen" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-back" data-nav="home">←</button>
+        <div>
+          <div class="header-title">🤝 Manos a la Obra</div>
+          <div class="header-sub" id="vol-header-count"></div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="vol-role-badge" class="role-badge viewer">👁 Vista</span>
+      </div>
+    </header>
+    <main class="content" id="vol-list"></main>
+    <button id="vol-fab" class="fab hidden">+</button>
+  </div>
+
+  <!-- ══ DONACIONES ═════════════════════════════════════════════════════════ -->
+  <div id="donaciones-screen" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-back" data-nav="home">←</button>
+        <div>
+          <div class="header-title">🎁 Donaciones</div>
+          <div class="header-sub">Inventario de ayuda</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="don-role-badge" class="role-badge viewer">👁 Vista</span>
+      </div>
+    </header>
+    <div class="updated-bar">
+      <span>🕐 <span id="don-updated-time">—</span></span>
+    </div>
+    <main class="content" id="don-content">
+      <div id="cat-urgente" class="category-section urgente">
+        <div class="category-header">
+          <div class="category-header-left">
+            <span class="category-icon">🔴</span>
+            <div>
+              <div class="category-title">URGENTE</div>
+              <div class="category-count"></div>
+            </div>
+          </div>
+          <span class="category-chevron">▾</span>
+        </div>
+        <div class="category-body"></div>
+      </div>
+      <div id="cat-necesario" class="category-section necesario">
+        <div class="category-header">
+          <div class="category-header-left">
+            <span class="category-icon">🟡</span>
+            <div>
+              <div class="category-title">NECESARIO</div>
+              <div class="category-count"></div>
+            </div>
+          </div>
+          <span class="category-chevron">▾</span>
+        </div>
+        <div class="category-body"></div>
+      </div>
+      <div id="cat-no_traer" class="category-section no-traer">
+        <div class="category-header">
+          <div class="category-header-left">
+            <span class="category-icon">🚫</span>
+            <div>
+              <div class="category-title">NO TRAER</div>
+              <div class="category-count"></div>
+            </div>
+          </div>
+          <span class="category-chevron">▾</span>
+        </div>
+        <div class="category-body"></div>
+      </div>
+    </main>
+    <button id="don-fab" class="fab hidden">+</button>
+  </div>
+
+  <!-- ══ REQUERIMIENTOS ═════════════════════════════════════════════════════ -->
+  <div id="requerimientos-screen" class="screen">
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-back" data-nav="home">←</button>
+        <div>
+          <div class="header-title">📋 Requerimientos</div>
+          <div class="header-sub" id="req-header-count"></div>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="req-role-badge" class="role-badge viewer">👁 Vista</span>
+      </div>
+    </header>
+    <main class="content" id="req-list"></main>
+    <button id="req-fab" class="fab hidden">+</button>
+  </div>
+
+  <!-- ══ MODAL: VOLUNTARIO ══════════════════════════════════════════════════ -->
+  <div id="vol-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-title">
+        <span id="vol-modal-title">Registrar voluntario</span>
+        <button class="modal-close" data-close="vol-modal">×</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nombre completo *</label>
+        <input id="vf-nombre" class="form-input" type="text" placeholder="Nombre y apellido">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Torre</label>
+          <input id="vf-torre" class="form-input" type="text" placeholder="Ej: Torre 3">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Apto</label>
+          <input id="vf-apto" class="form-input" type="text" placeholder="Ej: 401">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Teléfono</label>
+        <input id="vf-telefono" class="form-input" type="tel" placeholder="300 000 0000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo de aporte *</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="tipo-aporte" value="servicio" checked> Servicio
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="tipo-aporte" value="dinero"> Dinero
+          </label>
+        </div>
+      </div>
+      <div id="servicio-field" class="form-group">
+        <label class="form-label">Tipo de servicio</label>
+        <select id="vf-servicio" class="form-select">
+          <option value="transporte">🚗 Transporte</option>
+          <option value="administrativo">📁 Administrativo</option>
+          <option value="compras">🛒 Compras</option>
+          <option value="empaque">📦 Empaque</option>
+          <option value="computador">💻 Computador</option>
+          <option value="aliados">🤝 Aliados</option>
+        </select>
+      </div>
+      <div id="dinero-field" class="form-group" style="display:none">
+        <label class="form-label">Monto (opcional)</label>
+        <input id="vf-monto" class="form-input" type="number" placeholder="$ Valor en pesos">
+      </div>
+      <button id="vol-save-btn" class="btn btn-primary" style="margin-bottom:10px">Guardar</button>
+      <button id="vol-delete-btn" class="btn btn-red" style="display:none">Eliminar</button>
+    </div>
+  </div>
+
+  <!-- ══ MODAL: ÍTEM DONACIÓN ═══════════════════════════════════════════════ -->
+  <div id="item-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-title">
+        <span id="item-modal-title">Ítem</span>
+        <button class="modal-close" data-close="item-modal">×</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nombre *</label>
+        <input id="f-name" class="form-input" type="text" placeholder="Ej: Arroz">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subcategoría</label>
+        <input id="f-sub" class="form-input" type="text" placeholder="Ej: Alimentos, Aseo personal">
+      </div>
+      <div id="status-fields">
+        <div class="form-group">
+          <label class="form-label">Estado</label>
+          <select id="f-status" class="form-select">
+            <option value="critico">🔴 Crítico — Se necesita urgente</option>
+            <option value="necesario">🟡 Necesario</option>
+            <option value="parcial">🔵 Parcialmente cubierto</option>
+            <option value="cubierto">🟢 Cubierto</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Recibido</label>
+            <input id="f-received" class="form-input" type="number" min="0" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Necesario</label>
+            <input id="f-needed" class="form-input" type="number" min="0" placeholder="Opcional">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Unidad</label>
+          <input id="f-unit" class="form-input" type="text" placeholder="kg, paquetes, unidades…">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nota</label>
+        <textarea id="f-notes" class="form-textarea" placeholder="Información adicional…"></textarea>
+      </div>
+      <button id="item-save-btn" class="btn btn-primary" style="margin-bottom:10px">Guardar</button>
+      <button id="item-delete-btn" class="btn btn-red" style="display:none">Eliminar ítem</button>
+    </div>
+  </div>
+
+  <!-- ══ MODAL: REQUERIMIENTO ═══════════════════════════════════════════════ -->
+  <div id="req-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-title">
+        <span id="req-modal-title">Nuevo requerimiento</span>
+        <button class="modal-close" data-close="req-modal">×</button>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fecha *</label>
+          <input id="rf-fecha" class="form-input" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ciudad</label>
+          <input id="rf-ciudad" class="form-input" type="text" placeholder="Ciudad">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Barrio</label>
+          <input id="rf-barrio" class="form-input" type="text" placeholder="Barrio">
+        </div>
+        <div class="form-group">
+          <label class="form-label">PAX (personas)</label>
+          <input id="rf-pax" class="form-input" type="number" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nombre del beneficiario *</label>
+        <input id="rf-nombre" class="form-input" type="text" placeholder="Nombre completo">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Patrocinador / Responsable</label>
+        <input id="rf-patrocinador" class="form-input" type="text" placeholder="Nombre del responsable">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Solarum</label>
+          <input id="rf-solarum" class="form-input" type="text" placeholder="">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input id="rf-telefono" class="form-input" type="tel" placeholder="300 000 0000">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Dirección</label>
+        <input id="rf-direccion" class="form-input" type="text" placeholder="Dirección completa">
+      </div>
+      <div class="form-label" style="margin-bottom:8px;margin-top:4px">Kits y mercado</div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Kits Aseo</label>
+          <input id="rf-kits-aseo" class="form-input" type="number" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kits Bebé</label>
+          <input id="rf-kits-bebe" class="form-input" type="number" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mercado</label>
+          <input id="rf-mercado" class="form-input" type="number" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Animales</label>
+          <input id="rf-animales" class="form-input" type="text" placeholder="Ej: 2 perros">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Material</label>
+          <input id="rf-material" class="form-input" type="text" placeholder="Tipo de material">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ayuda requerida</label>
+        <textarea id="rf-ayuda" class="form-textarea" placeholder="Describe la ayuda que necesita…"></textarea>
+      </div>
+      <button id="req-save-btn" class="btn btn-primary" style="margin-bottom:10px">Guardar</button>
+      <button id="req-delete-btn" class="btn btn-red" style="display:none">Eliminar</button>
+    </div>
+  </div>
+
+  <!-- ══ MODAL: ANUNCIO ════════════════════════════════════════════════════ -->
+  <div id="announcement-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-title">
+        <span>📢 Anuncio</span>
+        <button class="modal-close" data-close="announcement-modal">×</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mensaje para voluntarios y donantes</label>
+        <textarea id="f-announcement" class="form-textarea" rows="4"
+          placeholder="Ej: El centro estará abierto de 8am a 6pm."></textarea>
+      </div>
+      <button id="ann-save-btn" class="btn btn-primary">Publicar anuncio</button>
+    </div>
+  </div>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
