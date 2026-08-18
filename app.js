@@ -75,16 +75,16 @@ let editingReqId = null;
 // ── PERSISTENCE ───────────────────────────────────────────────────────────────
 function load() {
   try {
-    const saved = JSON.parse(localStorage.getItem('acopio-v3'));
+    const saved = JSON.parse(localStorage.getItem('acopio-v4'));
     if (saved) {
       state = { ...state, ...saved, isAdmin: false, currentScreen: 'home' };
     } else {
-      state.items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+      state.items = [];
       state.requerimientos = JSON.parse(JSON.stringify(DEFAULT_REQUERIMIENTOS));
       state.nextConsecutivo = 16;
     }
   } catch {
-    state.items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+    state.items = [];
     state.requerimientos = JSON.parse(JSON.stringify(DEFAULT_REQUERIMIENTOS));
     state.nextConsecutivo = 16;
   }
@@ -92,7 +92,7 @@ function load() {
 
 function save() {
   state.updatedAt = new Date().toISOString();
-  localStorage.setItem('acopio-v3', JSON.stringify(state));
+  localStorage.setItem('acopio-v4', JSON.stringify(state));
 }
 
 

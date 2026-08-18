@@ -1,4 +1,4 @@
-const CACHE = 'acopio-v3';
+const CACHE = 'acopio-v4';
 const ASSETS = ['/', '/index.html', '/styles.css', '/app.js', '/manifest.json'];
 
 self.addEventListener('install', e => {
