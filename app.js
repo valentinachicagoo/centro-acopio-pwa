@@ -42,7 +42,8 @@ let state = {
   voluntarios: [],
   requerimientos: [],
   announcement: '',
-  adminPassword: 'acopio2024',
+  adminUsername: 'solarum',
+  adminPassword: 'centrodeacopio',
   updatedAt: null,
   collapsed: { urgente: false, necesario: false, no_traer: false },
 };
@@ -119,10 +120,12 @@ function loginAdmin() {
     input.focus();
     return;
   }
-  if (input.value === state.adminPassword) {
+  const usernameInput = document.getElementById('admin-username-input');
+  if (usernameInput.value.trim() === state.adminUsername && input.value === state.adminPassword) {
     state.isAdmin = true;
     error.style.display = 'none';
     input.value = '';
+    usernameInput.value = '';
     field.style.display = 'none';
     navigateTo('home');
   } else {
